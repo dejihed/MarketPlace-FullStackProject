@@ -1,0 +1,201 @@
+<app-navbar></app-navbar>
+
+<div class="browse-page">
+  <div class="browse-container">
+    <div class="browse-layout">
+      
+      <!-- Sidebar Filters with Background -->
+      <aside class="filters-sidebar" [class.mobile-open]="filtersOpen">
+        <div class="filters-wrapper">
+          <div class="sidebar-header">
+            <h3>Filters</h3>
+            <button class="close-filters-btn" (click)="toggleFilters()">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Search -->
+          <div class="filter-group">
+            <label class="filter-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              Search
+            </label>
+            <input 
+              type="text" 
+              placeholder="Search products..." 
+              class="filter-input"
+              [(ngModel)]="searchTerm"
+              (keyup)="applyFilters()" />
+          </div>
+
+          <!-- Category -->
+          <div class="filter-group">
+            <label class="filter-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+              </svg>
+              Category
+            </label>
+            <div class="category-pills">
+              <button 
+                *ngFor="let cat of quickCategories"
+                class="category-pill"
+                [class.active]="selectedCategory === cat.key"
+                (click)="selectCategory(cat.key)">
+                {{ cat.icon }} {{ cat.name }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="filter-group">
+            <label class="filter-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              Location
+            </label>
+            <input 
+              type="text" 
+              placeholder="Enter location..." 
+              class="filter-input"
+              [(ngModel)]="addressFilter"
+              (keyup)="applyFilters()" />
+          </div>
+
+          <!-- Price Range - Vertical Layout -->
+          <div class="filter-group">
+            <label class="filter-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+              Price Range (DT)
+            </label>
+            <div class="price-inputs-vertical">
+              <input 
+                type="number" 
+                placeholder="Min price" 
+                class="filter-input"
+                [(ngModel)]="minPrice"
+                (keyup)="applyFilters()" />
+              <input 
+                type="number" 
+                placeholder="Max price" 
+                class="filter-input"
+                [(ngModel)]="maxPrice"
+                (keyup)="applyFilters()" />
+            </div>
+          </div>
+
+          <!-- Clear Filters -->
+          <button 
+            class="clear-all-btn" 
+            *ngIf="hasActiveFilters()" 
+            (click)="clearFilters()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Clear All Filters
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="browse-main">
+        
+        <!-- Toolbar - Only filter button and results count -->
+        <div class="browse-toolbar">
+          <button class="mobile-filter-btn" (click)="toggleFilters()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            Filters
+          </button>
+          <span class="results-count">{{ filteredProducts.length }} {{ filteredProducts.length === 1 ? 'product' : 'products' }} found</span>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="products-grid" *ngIf="filteredProducts.length > 0">
+          <div 
+            class="product-card" 
+            *ngFor="let p of filteredProducts"
+            (click)="viewProduct(p.id)">
+            <div class="card-image-container">
+              <img [src]="'http://localhost:8080' + p.images[0]" [alt]="p.title" class="card-image" />
+              <div class="category-badge">{{ getCategoryIcon(p.category) }}</div>
+              <button class="wishlist-btn" (click)="toggleFavorite(p.id, $event)">
+                <svg width="20" height="20" viewBox="0 0 24 24" [attr.fill]="isFavorite(p.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="card-content">
+              <div class="card-price">{{ p.price }} DT</div>
+              <h3 class="card-title">{{ p.title }}</h3>
+              <div class="card-meta">
+                <span class="meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  {{ p.address }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Results -->
+        <div class="no-results" *ngIf="filteredProducts.length === 0">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <h3>No products found</h3>
+          <p>Try adjusting your filters or search terms</p>
+          <button class="clear-filters-btn-inline" (click)="clearFilters()" *ngIf="hasActiveFilters()">
+            Clear All Filters
+          </button>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- Login Popup Modal -->
+<div class="modal-overlay" *ngIf="showLoginPopup" (click)="closeLoginPopup()">
+  <div class="login-popup-modal" (click)="$event.stopPropagation()">
+    <button class="close-popup-btn" (click)="closeLoginPopup()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    
+    <div class="popup-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+    </div>
+    
+    <h3>Login Required</h3>
+    <p>Please login to add products to your favorites</p>
+    
+    <div class="popup-actions">
+      <button class="popup-cancel-btn" (click)="closeLoginPopup()">Cancel</button>
+      <button class="popup-login-btn" (click)="goToLogin()">Go to Login</button>
+    </div>
+  </div>
+</div>

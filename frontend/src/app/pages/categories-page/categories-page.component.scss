@@ -1,0 +1,119 @@
+.categories-page {
+  min-height: 100vh;
+  padding: 120px 24px 60px;
+  background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 60px;
+
+  h1 {
+    font-size: 48px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 16px;
+    
+    @media (max-width: 768px) {
+      font-size: 36px;
+    }
+  }
+
+  p {
+    font-size: 20px;
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+.categories-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.category-card {
+  background: white;
+  border-radius: 24px;
+  padding: 40px 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    border-color: #e2e8f0;
+
+    &::before {
+      transform: scaleX(1);
+    }
+
+    .category-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .category-arrow {
+      transform: translateX(8px);
+    }
+  }
+}
+
+.category-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.category-card h3 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 12px;
+}
+
+.category-card p {
+  font-size: 16px;
+  color: #64748b;
+  margin: 0 0 24px;
+  line-height: 1.6;
+}
+
+.category-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #f8fafc;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+
+  svg {
+    color: #667eea;
+  }
+}

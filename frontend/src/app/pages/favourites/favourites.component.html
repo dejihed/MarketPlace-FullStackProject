@@ -1,0 +1,49 @@
+<app-navbar></app-navbar>
+
+<div class="favorites-page">
+  <div class="container">
+    <div class="page-header">
+      <h1>My Favorites</h1>
+      <p>{{ favoriteProducts.length }} saved items</p>
+    </div>
+
+    <div class="no-favorites" *ngIf="favoriteProducts.length === 0">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+      <h3>No favorites yet</h3>
+      <p>Start adding products to your favorites by clicking the heart icon</p>
+      <button class="browse-btn" routerLink="/">Browse Products</button>
+    </div>
+
+    <div class="products-grid" *ngIf="favoriteProducts.length > 0">
+      <div 
+        class="product-card" 
+        *ngFor="let p of favoriteProducts">
+        <div class="card-image-container" (click)="viewProduct(p.id)">
+          <img [src]="'http://localhost:8080' + p.images[0]" [alt]="p.title" class="card-image" />
+          <div class="category-badge">{{ getCategoryIcon(p.category) }}</div>
+          <button class="remove-fav-btn" (click)="removeFavorite(p.id, $event)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="card-content">
+          <div class="card-price">{{ p.price }} DT</div>
+          <h3 class="card-title" (click)="viewProduct(p.id)">{{ p.title }}</h3>
+          <div class="card-meta">
+            <span class="meta-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              {{ p.address }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

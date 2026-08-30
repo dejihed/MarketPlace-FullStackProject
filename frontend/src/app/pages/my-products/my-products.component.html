@@ -1,0 +1,167 @@
+<app-navbar></app-navbar>
+
+<div class="my-products-page">
+  <div class="container">
+    <div class="page-header">
+      <h1>My Products</h1>
+      <button class="add-btn" routerLink="/sell">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add Product
+      </button>
+    </div>
+
+    <div class="no-products" *ngIf="products.length === 0">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+      </svg>
+      <h3>No products yet</h3>
+      <p>Start selling by creating your first listing</p>
+      <button class="get-started-btn" routerLink="/sell">Get Started</button>
+    </div>
+
+    <div class="products-grid" *ngIf="products.length > 0">
+      <div class="product-card" *ngFor="let p of products">
+        <div class="card-image" (click)="viewProduct(p.id)">
+          <img [src]="'http://localhost:8080' + p.images[0]" [alt]="p.title" />
+          <div class="category-badge">{{ getCategoryIcon(p.category) }}</div>
+        </div>
+
+        <div class="card-content">
+          <div class="card-price">{{ p.price }} DT</div>
+          <h3 class="card-title" (click)="viewProduct(p.id)">{{ p.title }}</h3>
+          <div class="card-meta">
+            <span>📍 {{ p.address }}</span>
+          </div>
+
+          <div class="card-actions">
+            <button class="edit-btn" (click)="editProduct(p)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              Edit
+            </button>
+            <button class="delete-btn" (click)="deleteProduct(p.id)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal with Image Management -->
+<div class="modal-overlay" *ngIf="editingProduct" (click)="closeEditModal()">
+  <div class="modal-content edit-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Edit Product</h2>
+      <button class="close-btn" (click)="closeEditModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <form [formGroup]="editForm" (ngSubmit)="updateProduct()">
+      
+      <!-- Existing Images -->
+      <div class="form-section" *ngIf="existingImages.length > 0">
+        <label>Current Images</label>
+        <div class="existing-images-grid">
+          <div *ngFor="let img of existingImages; let i = index" class="existing-image">
+            <img [src]="'http://localhost:8080' + img.url" alt="Product image" />
+            <button type="button" class="remove-existing-btn" (click)="removeExistingImage(i)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add New Images -->
+      <div class="form-section">
+        <label>Add New Images</label>
+        <input 
+          type="file" 
+          #fileInput 
+          multiple 
+          accept="image/*"
+          (change)="onFileSelect($event)"
+          style="display: none" />
+        
+        <div class="new-images-grid">
+          <div *ngFor="let preview of newImagePreviews; let i = index" class="image-preview">
+            <img [src]="preview" alt="New image" />
+            <button type="button" class="remove-img-btn" (click)="removeNewImage(i)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          
+          <button type="button" class="upload-btn-small" (click)="fileInput.click()" *ngIf="getTotalImages() < 5">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Photos
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" formControlName="title" class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea formControlName="description" rows="4" class="form-textarea"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Price (DT)</label>
+          <input type="number" formControlName="price" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select formControlName="category" class="form-select">
+            <option value="PHONES">📱 Phones</option>
+            <option value="LAPTOPS">💻 Laptops</option>
+            <option value="BIKES">🚲 Bikes</option>
+            <option value="BOOKS">📚 Books</option>
+            <option value="CLOTHES">👕 Clothes</option>
+            <option value="OTHER">🏷️ Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" formControlName="address" class="form-input" />
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn" (click)="closeEditModal()">Cancel</button>
+        <button type="submit" class="save-btn" [disabled]="editForm.invalid || updating">
+          <span *ngIf="!updating">Save Changes</span>
+          <span *ngIf="updating">Updating...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,141 @@
+<app-navbar></app-navbar>
+
+<div class="admin-dashboard">
+  <div class="container">
+    <div class="page-header">
+      <h1>🛡️ Admin Dashboard</h1>
+      <p>Manage users, products, and view statistics</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid" *ngIf="stats">
+      <div class="stat-card">
+        <div class="stat-icon users">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.totalUsers }}</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon products">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.totalProducts }}</div>
+          <div class="stat-label">Total Products</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon favorites">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.totalFavorites }}</div>
+          <div class="stat-label">Total Favorites</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Breakdown -->
+    <div class="section-card" *ngIf="stats?.categoryBreakdown">
+      <h2>📊 Products by Category</h2>
+      <div class="category-stats">
+        <div class="category-stat-item" *ngFor="let item of getCategoryArray()">
+          <div class="category-name">{{ getCategoryIcon(item.category) }} {{ getCategoryName(item.category) }}</div>
+          <div class="category-count">{{ item.count }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'users'"
+        (click)="activeTab = 'users'">
+        👥 Users ({{ users.length }})
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'products'"
+        (click)="activeTab = 'products'">
+        📦 Products ({{ products.length }})
+      </button>
+    </div>
+
+    <!-- Users Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'users'">
+      <div class="users-table">
+        <div class="table-header">
+          <div class="th">Name</div>
+          <div class="th">Email</div>
+          <div class="th">Phone</div>
+          <div class="th">Role</div>
+          <div class="th">Actions</div>
+        </div>
+        <div class="table-row" *ngFor="let user of users">
+          <div class="td">{{ user.name }}</div>
+          <div class="td">{{ user.email }}</div>
+          <div class="td">{{ user.phone }}</div>
+          <div class="td">
+            <span class="role-badge" [class.admin]="user.role === 'ADMIN'">
+              {{ user.role }}
+            </span>
+          </div>
+          <div class="td">
+            <button 
+              class="delete-user-btn" 
+              (click)="deleteUser(user.id)"
+              [disabled]="user.role === 'ADMIN'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'products'">
+      <div class="products-grid">
+        <div class="admin-product-card" *ngFor="let p of products">
+          <div class="product-image" (click)="viewProduct(p.id)">
+            <img [src]="'http://localhost:8080' + p.images[0]" [alt]="p.title" />
+            <div class="category-badge">{{ getCategoryIcon(p.category) }}</div>
+          </div>
+          <div class="product-content">
+            <div class="product-price">{{ p.price }} DT</div>
+            <h3 class="product-title">{{ p.title }}</h3>
+            <div class="product-seller">
+              By: {{ p.seller.name }}
+            </div>
+            <button class="delete-product-btn" (click)="deleteProduct(p.id)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              Delete Product
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

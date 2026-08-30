@@ -1,0 +1,234 @@
+<app-navbar></app-navbar>
+
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-title">
+      Buy & Sell <span class="gradient-text">On Campus</span>
+    </h1>
+    <p class="hero-subtitle">The trusted marketplace for students to buy and sell items easily</p>
+    
+    <div class="hero-search">
+      <div class="search-container">
+        <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input 
+          type="text" 
+          placeholder="Search for anything..." 
+          class="hero-search-input"
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="searchProducts()" />
+        <button class="hero-search-btn" (click)="searchProducts()">
+          Search
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-number">{{ stats.totalProducts }}+</div>
+        <div class="stat-label">Products</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number">{{ categories.length }}</div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Safe</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Categories Section -->
+<div class="section categories-section">
+  <div class="container">
+    <div class="section-header-center">
+      <h2 class="section-title">Browse by Category</h2>
+      <p class="section-subtitle">Find exactly what you're looking for</p>
+    </div>
+
+    <div class="categories-grid">
+      <div 
+        *ngFor="let cat of categories" 
+        class="category-card"
+        (click)="browseCategory(cat.key)">
+        <div class="category-icon" [style.background]="cat.color">
+          {{ cat.icon }}
+        </div>
+        <h3 class="category-name">{{ cat.name }}</h3>
+        <p class="category-desc">{{ cat.description }}</p>
+        <div class="category-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Latest Listings Section -->
+<div class="section latest-section">
+  <div class="container">
+    <div class="section-header-flex">
+      <div>
+        <h2 class="section-title">🔥 Latest Listings</h2>
+        <p class="section-subtitle">Fresh items just added</p>
+      </div>
+      <button class="view-all-btn" (click)="browseAll()">
+        View All
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <div class="products-grid" *ngIf="latestProducts.length > 0">
+      <div 
+        class="product-card" 
+        *ngFor="let p of latestProducts"
+        (click)="viewProduct(p.id)">
+        <div class="card-image-container">
+          <img [src]="'http://localhost:8080' + p.images[0]" [alt]="p.title" class="card-image" />
+          <div class="new-badge">NEW</div>
+          <div class="category-badge">{{ getCategoryIcon(p.category) }}</div>
+          <button class="wishlist-btn" (click)="toggleFavorite(p.id, $event)">
+            <svg width="20" height="20" viewBox="0 0 24 24" [attr.fill]="isFavorite(p.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="card-content">
+          <div class="card-price">{{ p.price }} DT</div>
+          <h3 class="card-title">{{ p.title }}</h3>
+          <div class="card-meta">
+            <span class="meta-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              {{ p.address }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="latestProducts.length === 0">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+      </svg>
+      <h3>No products yet</h3>
+      <p>Be the first to list an item!</p>
+    </div>
+  </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="section how-it-works-section">
+  <div class="container">
+    <div class="section-header-center">
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-subtitle">Get started in three simple steps</p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <h3>Create Account</h3>
+        <p>Sign up with your student email and create your profile</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+          </svg>
+        </div>
+        <h3>List Items</h3>
+        <p>Post items you want to sell with photos and descriptions</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <h3>Connect & Trade</h3>
+        <p>Chat with buyers or sellers and complete the transaction</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA Section -->
+<div class="section cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <h2>Ready to Start Trading?</h2>
+      <p>Join thousands of students buying and selling on campus</p>
+      <div class="cta-buttons">
+        <button class="cta-btn primary" routerLink="/browse">
+          Browse Products
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+        <button class="cta-btn secondary" routerLink="/sell" *ngIf="isLoggedIn">
+          List an Item
+        </button>
+        <button class="cta-btn secondary" routerLink="/register" *ngIf="!isLoggedIn">
+          Sign Up Free
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Login Popup Modal -->
+<div class="modal-overlay" *ngIf="showLoginPopup" (click)="closeLoginPopup()">
+  <div class="login-popup-modal" (click)="$event.stopPropagation()">
+    <button class="close-popup-btn" (click)="closeLoginPopup()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    
+    <div class="popup-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+    </div>
+    
+    <h3>Login Required</h3>
+    <p>Please login to add products to your favorites</p>
+    
+    <div class="popup-actions">
+      <button class="popup-cancel-btn" (click)="closeLoginPopup()">Cancel</button>
+      <button class="popup-login-btn" (click)="goToLogin()">Go to Login</button>
+    </div>
+  </div>
+</div>

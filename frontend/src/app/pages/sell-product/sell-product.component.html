@@ -1,0 +1,118 @@
+<app-navbar></app-navbar>
+
+<div class="sell-product-page">
+  <div class="container">
+    <div class="page-header">
+      <h1>Sell an Item</h1>
+      <p>Fill in the details to list your product</p>
+    </div>
+
+    <div class="form-card">
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Image Upload -->
+        <div class="form-section">
+          <h3>Product Images</h3>
+          <div class="image-upload-area">
+            <input 
+              type="file" 
+              #fileInput 
+              multiple 
+              accept="image/*"
+              (change)="onFileSelect($event)"
+              style="display: none" />
+            
+            <div class="upload-grid">
+              <div *ngFor="let preview of imagePreviews; let i = index" class="image-preview">
+                <img [src]="preview" alt="Preview" />
+                <button type="button" class="remove-img-btn" (click)="removeImage(i)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+              
+              <button type="button" class="upload-btn" (click)="fileInput.click()" *ngIf="imagePreviews.length < 5">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Add Photos</span>
+                <small>Up to 5 images</small>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Basic Info -->
+        <div class="form-section">
+          <h3>Basic Information</h3>
+          
+          <div class="form-group">
+            <label>Title *</label>
+            <input 
+              type="text" 
+              formControlName="title" 
+              placeholder="e.g., iPhone 13 Pro Max"
+              class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label>Description *</label>
+            <textarea 
+              formControlName="description" 
+              placeholder="Describe your item in detail..."
+              rows="5"
+              class="form-textarea"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Price (DT) *</label>
+              <input 
+                type="number" 
+                formControlName="price" 
+                placeholder="0.00"
+                class="form-input" />
+            </div>
+
+            <div class="form-group">
+              <label>Category *</label>
+              <select formControlName="category" class="form-select">
+                <option value="">Select category</option>
+                <option value="PHONES">📱 Phones</option>
+                <option value="LAPTOPS">💻 Laptops</option>
+                <option value="BIKES">🚲 Bikes</option>
+                <option value="BOOKS">📚 Books</option>
+                <option value="CLOTHES">👕 Clothes</option>
+                <option value="OTHER">🏷️ Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Location *</label>
+            <input 
+              type="text" 
+              formControlName="address" 
+              placeholder="e.g., North Campus, Tunis"
+              class="form-input" />
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" routerLink="/">Cancel</button>
+          <button type="submit" class="submit-btn" [disabled]="productForm.invalid || uploading">
+            <svg *ngIf="!uploading" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span *ngIf="!uploading">Publish Listing</span>
+            <span *ngIf="uploading">Uploading...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
