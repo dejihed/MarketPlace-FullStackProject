@@ -1,0 +1,1 @@
+La solution proposée consiste à développer une application web dédiée aux étudiants, permettant la vente de produits de manière simple et sécurisée. Cette plateforme facilitera la gestion des annonces, améliorera la recherche des produits et garantira des échanges fiables grâce à un système d’authentification et de modération adapté.
